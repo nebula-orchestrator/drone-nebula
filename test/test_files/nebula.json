@@ -1,0 +1,13 @@
+{
+  "starting_ports": [80],
+  "containers_per": {"cpu": 5},
+  "env_vars": {"test": "test123"},
+  "docker_image" : "registry/nginx",
+  "running": true,
+  "volumes": [],
+  "networks": ["nebula", "bridge"],
+  "devices": [],
+  "privileged": false,
+  "rolling_restart": false,
+  "app_name": "example_app"
+}
