@@ -1,6 +1,6 @@
 # drone-nebula
 
-CI/CD build status: [![Build Status](https://cloud.drone.io/api/badges/nebula-orchestrator/drone-nebula/status.svg)](https://cloud.drone.io/naorlivne/drone-nebula)
+CI/CD build status: [![Build Status](https://cloud.drone.io/api/badges/nebula-orchestrator/drone-nebula/status.svg)](https://cloud.drone.io/nebula-orchestrator/drone-nebula)
 
 Code coverage: [![codecov](https://codecov.io/gh/nebula-orchestrator/drone-nebula/branch/master/graph/badge.svg)](https://codecov.io/gh/naorlivne/drone-nebula)
 
