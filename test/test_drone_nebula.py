@@ -121,7 +121,8 @@ class BaseTests(TestCase):
     def test_nebula_create_nebula_job_failure(self):
         test_nebula_connection = NebulaDeploy(nebula_host="http://127.0.0.1")
         with requests_mock.Mocker() as request_mocker:
-            request_mocker.post('http://127.0.0.1:80/api/v2/apps/test', status_code=401)
+            request_mocker.post('http://127.0.0.1:80/api/v2/apps/test', status_code=401,
+                                text='{"test_json_key": "test_json_value"}')
             with self.assertRaises(Exception):
                 test_nebula_connection.create_nebula_app({"app_name": "test"})
 
@@ -136,7 +137,8 @@ class BaseTests(TestCase):
     def test_nebula_update_nebula_app_failure(self):
         test_nebula_connection = NebulaDeploy(nebula_host="http://127.0.0.1")
         with requests_mock.Mocker() as request_mocker:
-            request_mocker.put('http://127.0.0.1:80/api/v2/apps/test_job/test', status_code=401)
+            request_mocker.put('http://127.0.0.1:80/api/v2/apps/test_job/test', status_code=401,
+                               text='{"test_json_key": "test_json_value"}')
             with self.assertRaises(Exception):
                 test_nebula_connection.update_nebula_app({"app_name": "test"})
 
