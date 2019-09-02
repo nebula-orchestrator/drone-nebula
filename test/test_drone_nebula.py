@@ -105,7 +105,8 @@ class BaseTests(TestCase):
     def test_nebula_check_nebula_app_exists_connection_or_permission_issue(self):
         test_nebula_connection = NebulaDeploy(nebula_host="http://127.0.0.1")
         with requests_mock.Mocker() as request_mocker:
-            request_mocker.get('http://127.0.0.1:80/api/v2/apps/test_job', status_code=500)
+            request_mocker.get('http://127.0.0.1:80/api/v2/apps/test_job', status_code=500,
+                               text=app_creation_response_json_failure)
             with self.assertRaises(Exception):
                 test_nebula_connection.check_nebula_app_exists("test_job")
 
