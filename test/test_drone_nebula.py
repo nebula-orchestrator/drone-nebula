@@ -103,7 +103,7 @@ class BaseTests(TestCase):
             self.assertFalse(reply)
 
     def test_nebula_check_nebula_app_exists_connection_or_permission_issue(self):
-        test_nebula_connection = NebulaDeploy(nebula_host="http://127.0.0.1")
+        test_nebula_connection = NebulaDeploy(host="http://127.0.0.1")
         with requests_mock.Mocker() as request_mocker:
             request_mocker.get('http://127.0.0.1:80/api/v2/apps/test_job', status_code=500,
                                text=app_creation_response_json_failure)
@@ -119,7 +119,7 @@ class BaseTests(TestCase):
             self.assertDictEqual(reply, {'reply': {'test_json_key': 'test_json_value'}, 'status_code': 200})
 
     def test_nebula_create_nebula_job_failure(self):
-        test_nebula_connection = NebulaDeploy(nebula_host="http://127.0.0.1")
+        test_nebula_connection = NebulaDeploy(host="http://127.0.0.1")
         with requests_mock.Mocker() as request_mocker:
             request_mocker.post('http://127.0.0.1:80/api/v2/apps/test', status_code=401,
                                 text='{"test_json_key": "test_json_value"}')
@@ -135,7 +135,7 @@ class BaseTests(TestCase):
             self.assertDictEqual(reply, {'status_code': 200, 'reply': {'test_json_key': 'test_json_value'}})
 
     def test_nebula_update_nebula_app_failure(self):
-        test_nebula_connection = NebulaDeploy(nebula_host="http://127.0.0.1")
+        test_nebula_connection = NebulaDeploy(host="http://127.0.0.1")
         with requests_mock.Mocker() as request_mocker:
             request_mocker.post('http://127.0.0.1:80/api/v2/apps/test/update', status_code=401,
                                text='{"test_json_key": "test_json_value"}')

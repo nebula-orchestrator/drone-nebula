@@ -1,10 +1,11 @@
-from typing import Union, Optional
+from typing import Optional
 from NebulaPythonSDK import Nebula
 
 
 class NebulaDeploy:
 
-    def __init__(self, **kwargs: Optional[Union[int, str]]):
+    def __init__(self, host: Optional[str] = "127.0.0.1", username: Optional[str] = None,
+                 password: Optional[str] = None, token: Optional[str] = None, port: int = 80, protocol: str = "http"):
         """Init the nebula api connection object
 
             Arguments:
@@ -15,7 +16,8 @@ class NebulaDeploy:
                 port --the port of the nebula host, defaults to 80
                 protocol -- the protocol of the nebula host, "http" or "https", default to "http"
         """
-        self.nebula_connection = Nebula(kwargs)
+        self.nebula_connection = Nebula(host=host, username=username, password=password, token=token, port=port,
+                                        protocol=protocol)
 
     def check_nebula_app_exists(self, job_name: str) -> bool:
         """Checks if a given nebula jobs exists or not & raise an error if it can't tell

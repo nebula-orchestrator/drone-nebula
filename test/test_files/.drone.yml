@@ -1,0 +1,13 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: nebula_deploy
+  image: nebulaorchestrator/drone-nebula
+  settings:
+    nebula_host: "10.0.1.55"
+    nebula_job_file: "nebula.json"
+    nebula_username: "nebula"
+    nebula_password: "nebula"
+    nebula_port: "666"
