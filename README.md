@@ -89,6 +89,6 @@ The nebula token_auth token to use, defaults to None (no token auth is used)
 
 The nebula server port, defaults to 80
 
-#### nebula_port
+#### nebula_protocol
 
 The nebula server protocol, defaults to "http"
