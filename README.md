@@ -66,7 +66,7 @@ will result in:
 
 #### nebula_host
 
-The nebula server URL (no trailing slash should be used), defaults to "127.0.0.1"
+The nebula server FQDN\IP, defaults to "127.0.0.1"
 
 #### nebula_job_file
 
