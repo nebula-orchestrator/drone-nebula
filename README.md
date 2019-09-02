@@ -4,9 +4,7 @@ CI/CD build status: [![Build Status](https://cloud.drone.io/api/badges/nebula-or
 
 Code coverage: [![codecov](https://codecov.io/gh/nebula-orchestrator/drone-nebula/branch/master/graph/badge.svg)](https://codecov.io/gh/naorlivne/drone-nebula)
 
-Drone plugin for deploying to [nebula](https://dcos.github.io/nebula/).
-
-Drone plugin to build and publish Docker images to a container registry. For the usage information and a listing of the available options please take a look at [the docs](http://plugins.drone.io/drone-plugins/drone-docker/).
+Drone plugin for deploying to [nebula](http://nebula-orchestrator.github.io/).
 
 ## Usage
 
@@ -24,7 +22,7 @@ steps:
 - name: nebula_deploy
   image: nebulaorchestrator/drone-nebula
   settings:
-    nebula_host: http://127.0.01
+    nebula_host: my-nebula-host.com
     nebula_job_file: nebula.json
 ```
 
@@ -39,7 +37,7 @@ steps:
 - name: nebula_deploy
   image: nebulaorchestrator/drone-nebula
   settings:
-    nebula_host: http://127.0.01
+    nebula_host: my-nebula-host.com
     nebula_job_file: nebula.json
     my_image_tag: my_dynamic_image
 ```
@@ -68,8 +66,29 @@ will result in:
 
 #### nebula_host
 
-The nebula server URL (no trailing slash should be used)
+The nebula server URL (no trailing slash should be used), defaults to "127.0.0.1"
 
 #### nebula_job_file
 
 The nebula configuration file location relative to the root folder of the repo, defaults to `nebula.json`
+
+#### nebula_username
+
+The nebula basic_auth username to use, defaults to None (no basic auth is used)
+
+#### nebula_password
+
+The nebula basic_auth password to use, defaults to None (no basic auth is used)
+
+#### nebula_token
+
+The nebula token_auth token to use, defaults to None (no token auth is used)
+
+
+#### nebula_port
+
+The nebula server port, defaults to 80
+
+#### nebula_port
+
+The nebula server protocol, defaults to "http"
