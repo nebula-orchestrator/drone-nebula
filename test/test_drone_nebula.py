@@ -32,6 +32,25 @@ app_creation_response_json_success = """
     \"rolling_restart\": false
 }
 """
+cron_job_creation_response_json_success = """
+{
+    \"cron_job_id\": 1,
+    \"cron_job_name\": \"test12345\",
+    \"schedule\": \"0 * * * *\",
+    \"env_vars\": {
+        \"test\": \"test123\"
+    },
+    \"docker_image\": \"nginx\",
+    \"running\": true,
+    \"networks\": [
+        \"nebula\",
+        \"bridge\"
+    ],
+    \"volumes\": [],
+    \"devices\": [],
+    \"privileged\": false
+}
+"""
 
 
 class BaseTests(TestCase):
@@ -164,8 +183,11 @@ class BaseTests(TestCase):
             self.assertDictEqual(reply["reply"]["env_vars"], {'test': 'test123'})
             self.assertEqual(reply["status_code"], 202)
 
-    def test_main_init(self):
-        test_envvars = {"PLUGIN_NEBULA_JOB_FILE": test_files_location + "/nebula.json"}
+    def test_main_init_app(self):
+        test_envvars = {
+            "PLUGIN_NEBULA_JOB_FILE": test_files_location + "/nebula.json",
+            "PLUGIN_NEBULA_HOST": "127.0.0.1"
+        }
         with mock.patch.dict(os.environ, test_envvars):
             with requests_mock.Mocker() as request_mocker:
                 request_mocker.get('http://127.0.0.1:80/api/v2/apps/example_app', status_code=200,
@@ -173,3 +195,95 @@ class BaseTests(TestCase):
                 request_mocker.post('http://127.0.0.1:80/api/v2/apps/example_app/update', status_code=202,
                                     text=app_creation_response_json_success)
                 init()
+
+    def test_main_init_cron_job(self):
+        test_envvars = {
+            "PLUGIN_NEBULA_JOB_FILE": test_files_location + "/nebula.json",
+            "PLUGIN_NEBULA_HOST": "127.0.0.1",
+            "PLUGIN_NEBULA_JOB_TYPE": "cron_job"
+        }
+        with mock.patch.dict(os.environ, test_envvars):
+            with requests_mock.Mocker() as request_mocker:
+                request_mocker.get('http://127.0.0.1:80/api/v2/cron_jobs/example_cron_job', status_code=200,
+                                   text=cron_job_creation_response_json_success)
+                request_mocker.post('http://127.0.0.1:80/api/v2/cron_jobs/example_cron_job/update', status_code=202,
+                                    text=cron_job_creation_response_json_success)
+                init()
+
+    def test_nebula_check_nebula_cron_job_exists_true(self):
+        test_nebula_connection = NebulaDeploy()
+        with requests_mock.Mocker() as request_mocker:
+            request_mocker.get('http://127.0.0.1:80/api/v2/cron_jobs/test_job', status_code=200,
+                               text=app_creation_response_json_success)
+            reply = test_nebula_connection.check_nebula_cron_job_exists("test_job")
+            self.assertTrue(reply)
+
+    def test_nebula_check_nebula_cron_job_exists_false(self):
+        test_nebula_connection = NebulaDeploy()
+        with requests_mock.Mocker() as request_mocker:
+            request_mocker.get('http://127.0.0.1:80/api/v2/cron_jobs/test_job', status_code=403,
+                               text=app_creation_response_json_failure)
+            reply = test_nebula_connection.check_nebula_cron_job_exists("test_job")
+            self.assertFalse(reply)
+
+    def test_nebula_check_nebula_cron_job_exists_connection_or_permission_issue(self):
+        test_nebula_connection = NebulaDeploy(host="127.0.0.1")
+        with requests_mock.Mocker() as request_mocker:
+            request_mocker.get('http://127.0.0.1:80/api/v2/cron_jobs/test_job', status_code=500,
+                               text=app_creation_response_json_failure)
+            with self.assertRaises(Exception):
+                test_nebula_connection.check_nebula_cron_job_exists("test_job")
+
+    def test_nebula_create_nebula_cron_job(self):
+        test_nebula_connection = NebulaDeploy()
+        with requests_mock.Mocker() as request_mocker:
+            request_mocker.post('http://127.0.0.1:80/api/v2/cron_jobs/test', status_code=200,
+                                text='{"test_json_key": "test_json_value"}')
+            reply = test_nebula_connection.create_nebula_cron_job({"cron_job_name": "test"})
+            self.assertDictEqual(reply, {'reply': {'test_json_key': 'test_json_value'}, 'status_code': 200})
+
+    def test_nebula_create_nebula_cron_job_failure(self):
+        test_nebula_connection = NebulaDeploy(host="127.0.0.1")
+        with requests_mock.Mocker() as request_mocker:
+            request_mocker.post('http://127.0.0.1:80/api/v2/cron_jobs/test', status_code=401,
+                                text='{"test_json_key": "test_json_value"}')
+            with self.assertRaises(Exception):
+                test_nebula_connection.create_nebula_cron_job({"cron_job_name": "test"})
+
+    def test_nebula_update_nebula_cron_job(self):
+        test_nebula_connection = NebulaDeploy()
+        with requests_mock.Mocker() as request_mocker:
+            request_mocker.post('http://127.0.0.1:80/api/v2/cron_jobs/test/update', status_code=202,
+                                text='{"test_json_key": "test_json_value"}')
+            reply = test_nebula_connection.update_nebula_cron_job({"cron_job_name": "test"})
+            self.assertDictEqual(reply, {'status_code': 202, 'reply': {'test_json_key': 'test_json_value'}})
+
+    def test_nebula_update_nebula_cron_job_failure(self):
+        test_nebula_connection = NebulaDeploy(host="127.0.0.1")
+        with requests_mock.Mocker() as request_mocker:
+            request_mocker.post('http://127.0.0.1:80/api/v2/cron_jobs/test/update', status_code=401,
+                                text='{"test_json_key": "test_json_value"}')
+            with self.assertRaises(Exception):
+                test_nebula_connection.update_nebula_cron_job({"cron_job_name": "test"})
+
+    def test_nebula_create_or_update_nebula_cron_job_create(self):
+        test_nebula_connection = NebulaDeploy()
+        with requests_mock.Mocker() as request_mocker:
+            request_mocker.get('http://127.0.0.1:80/api/v2/cron_jobs/test', status_code=403,
+                               text=app_creation_response_json_success)
+            request_mocker.post('http://127.0.0.1:80/api/v2/cron_jobs/test', status_code=200,
+                                text=app_creation_response_json_success)
+            reply = test_nebula_connection.create_or_update_nebula_cron_job({"cron_job_name": "test"})
+            self.assertDictEqual(reply["reply"]["env_vars"], {'test': 'test123'})
+            self.assertEqual(reply["status_code"], 200)
+
+    def test_nebula_create_or_update_nebula_cron_job_update(self):
+        test_nebula_connection = NebulaDeploy()
+        with requests_mock.Mocker() as request_mocker:
+            request_mocker.get('http://127.0.0.1:80/api/v2/cron_jobs/test', status_code=200,
+                               text=app_creation_response_json_success)
+            request_mocker.post('http://127.0.0.1:80/api/v2/cron_jobs/test/update', status_code=202,
+                                text=app_creation_response_json_success)
+            reply = test_nebula_connection.create_or_update_nebula_cron_job({"cron_job_name": "test"})
+            self.assertDictEqual(reply["reply"]["env_vars"], {'test': 'test123'})
+            self.assertEqual(reply["status_code"], 202)

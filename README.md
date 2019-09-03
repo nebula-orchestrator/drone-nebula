@@ -12,7 +12,7 @@ This plugin can be used to deploy applications to a nebula server, it will creat
 
 The below pipeline configuration demonstrates simple usage:
 
-> In addition to the `.drone.yml` file you will need to create a `nebula.json` file that contains the nebula configuration as well as the "app_name" field. Please see [here](test/test_files/nebula.json) for an example. 
+> In addition to the `.drone.yml` file you will need to create a `nebula.json` file that contains the nebula configuration as well as the "app_name" (for app) or "cron_job_name" (for cron_job) field. Please see [here](https://github.com/nebula-orchestrator/drone-nebula/blob/master/test/test_files/nebula.json) for an example. 
 
 ```yaml
 kind: pipeline
@@ -68,7 +68,7 @@ will result in:
 
 #### nebula_host
 
-The nebula server FQDN\IP, defaults to "127.0.0.1"
+The nebula server FQDN\IP, required
 
 #### nebula_job_file
 
@@ -94,3 +94,7 @@ The nebula server port, defaults to 80
 #### nebula_protocol
 
 The nebula server protocol, defaults to "http"
+
+#### nebula_job_type
+
+The type of nebula job, "app" or "cron_job", defaults to "app"

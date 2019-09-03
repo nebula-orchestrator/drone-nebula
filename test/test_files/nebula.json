@@ -9,5 +9,6 @@
   "devices": [],
   "privileged": false,
   "rolling_restart": false,
-  "app_name": "example_app"
+  "app_name": "example_app",
+  "cron_job_name": "example_cron_job"
 }
