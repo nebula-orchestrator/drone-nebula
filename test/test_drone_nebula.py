@@ -129,10 +129,10 @@ class BaseTests(TestCase):
     def test_nebula_update_nebula_app(self):
         test_nebula_connection = NebulaDeploy()
         with requests_mock.Mocker() as request_mocker:
-            request_mocker.post('http://127.0.0.1:80/api/v2/apps/test/update', status_code=200,
+            request_mocker.post('http://127.0.0.1:80/api/v2/apps/test/update', status_code=202,
                                 text='{"test_json_key": "test_json_value"}')
             reply = test_nebula_connection.update_nebula_app({"app_name": "test"})
-            self.assertDictEqual(reply, {'status_code': 200, 'reply': {'test_json_key': 'test_json_value'}})
+            self.assertDictEqual(reply, {'status_code': 202, 'reply': {'test_json_key': 'test_json_value'}})
 
     def test_nebula_update_nebula_app_failure(self):
         test_nebula_connection = NebulaDeploy(host="127.0.0.1")
@@ -158,11 +158,11 @@ class BaseTests(TestCase):
         with requests_mock.Mocker() as request_mocker:
             request_mocker.get('http://127.0.0.1:80/api/v2/apps/test', status_code=200,
                                text=app_creation_response_json_success)
-            request_mocker.post('http://127.0.0.1:80/api/v2/apps/test/update', status_code=200,
+            request_mocker.post('http://127.0.0.1:80/api/v2/apps/test/update', status_code=202,
                                 text=app_creation_response_json_success)
             reply = test_nebula_connection.create_or_update_nebula_app({"app_name": "test"})
             self.assertDictEqual(reply["reply"]["env_vars"], {'test': 'test123'})
-            self.assertEqual(reply["status_code"], 200)
+            self.assertEqual(reply["status_code"], 202)
 
     def test_main_init(self):
         test_envvars = {"PLUGIN_NEBULA_JOB_FILE": test_files_location + "/nebula.json"}
@@ -170,6 +170,6 @@ class BaseTests(TestCase):
             with requests_mock.Mocker() as request_mocker:
                 request_mocker.get('http://127.0.0.1:80/api/v2/apps/example_app', status_code=200,
                                    text=app_creation_response_json_success)
-                request_mocker.post('http://127.0.0.1:80/api/v2/apps/example_app/update', status_code=200,
+                request_mocker.post('http://127.0.0.1:80/api/v2/apps/example_app/update', status_code=202,
                                     text=app_creation_response_json_success)
                 init()

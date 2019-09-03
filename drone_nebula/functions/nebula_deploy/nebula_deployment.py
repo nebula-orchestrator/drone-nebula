@@ -62,7 +62,7 @@ class NebulaDeploy:
                 response_json -- the response JSON returned from nebula
         """
         response = self.nebula_connection.update_app(job_json["app_name"], job_json, force_all=True)
-        if response["status_code"] == 200:
+        if response["status_code"] == 202:
             return response
         else:
             print(response)
