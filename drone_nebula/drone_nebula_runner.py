@@ -8,7 +8,7 @@ import os
 def init():
     # read envvars
     print("reading envvars")
-    parser = ParseIt(recurse=False, envvar_prefix="plugin_")
+    parser = ParseIt(recurse=False, envvar_prefix="plugin_", config_type_priority=["env_vars"])
     nebula_host = parser.read_configuration_variable("nebula_host", required=True)
     nebula_username = parser.read_configuration_variable("nebula_username", default_value=None)
     nebula_password = parser.read_configuration_variable("nebula_password", default_value=None)

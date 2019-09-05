@@ -1,14 +1,18 @@
 kind: pipeline
 type: docker
-name: default
+name: amd64_build
+
+platform:
+  os: linux
+  arch: amd64
 
 steps:
 - name: run_python_unit_test
   image: python:3.7.4-alpine3.10
   commands:
   - pip install -r requirements.txt
-  - coverage run -m unittest
-  - codecov  --commit=$DRONE_COMMIT_SHA
+  - coverage run -m unittest -b
+  - codecov --commit=$DRONE_COMMIT_SHA
   environment:
     TEST_FILES_LOCATION: test/test_files
     CODECOV_TOKEN:
@@ -24,4 +28,92 @@ steps:
       from_secret: docker_password
     repo: nebulaorchestrator/drone-nebula
     tags:
-      - latest
+      - linux-amd64
+
+---
+kind: pipeline
+type: docker
+name: arm64_build
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: run_python_unit_test
+  image: python:3.7.4-alpine3.10
+  commands:
+  - pip install -r requirements.txt
+  - coverage run -m unittest
+  - codecov --commit=$DRONE_COMMIT_SHA
+  environment:
+    TEST_FILES_LOCATION: test/test_files
+    CODECOV_TOKEN:
+      from_secret: codecov_token
+
+- name: docker_build_version
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: nebulaorchestrator/drone-nebula
+    tags:
+      - linux-arm64
+
+---
+kind: pipeline
+type: docker
+name: arm_build
+
+platform:
+  os: linux
+  arch: arm
+
+steps:
+- name: run_python_unit_test
+  image: python:3.7.4-alpine3.10
+  commands:
+  - pip install -r requirements.txt
+  - coverage run -m unittest
+  - codecov --commit=$DRONE_COMMIT_SHA
+  environment:
+    TEST_FILES_LOCATION: test/test_files
+    CODECOV_TOKEN:
+      from_secret: codecov_token
+
+- name: docker_build_version
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: nebulaorchestrator/drone-nebula
+    tags:
+      - linux-arm
+
+---
+kind: pipeline
+type: docker
+name: publish_docker_manifest
+
+steps:
+- name: manifest
+  image: plugins/manifest
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    target:  nebulaorchestrator/drone-nebula
+    template: nebulaorchestrator/drone-nebula:OS-ARCH
+    platforms:
+      - linux/amd64
+      - linux/arm64
+
+depends_on:
+- amd64_build
+- arm64_build
+- arm_build
