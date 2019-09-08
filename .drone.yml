@@ -134,7 +134,7 @@ steps:
     recipients: [ naorlivne@gmail.com ]
     recipients_only: true
     when:
-      status: [ changed, failure, success ]
+      status: [ changed, failure ]
 
 depends_on:
 - publish_docker_manifest
