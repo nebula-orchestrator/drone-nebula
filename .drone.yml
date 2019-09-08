@@ -132,7 +132,7 @@ steps:
     port: 25
     from: dronealert@dronealert.com
     when:
-      status: [ changed, failure ]
+      status: [ changed, failure, success ]
 
 depends_on:
 - publish_docker_manifest
