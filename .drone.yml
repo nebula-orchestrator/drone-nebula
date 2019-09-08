@@ -130,8 +130,7 @@ steps:
   settings:
     host: aspmx.l.google.com
     port: 25
-    from:
-      from_secret: email_address
+    from: dronealert@dronealert.com
     when:
       status: [ changed, failure ]
 
