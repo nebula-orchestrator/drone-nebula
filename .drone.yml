@@ -120,7 +120,7 @@ trigger:
 ---
 kind: pipeline
 type: docker
-name: publish_docker_manifest
+name: publish_docker_manifest_push
 
 steps:
 - name: manifest
