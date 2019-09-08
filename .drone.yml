@@ -26,8 +26,8 @@ steps:
     password:
       from_secret: docker_password
     repo: nebulaorchestrator/drone-nebula
-    tags:
-      - linux-amd64
+    auto_tag: true
+    auto_tag_suffix: -linux-amd64
 
 ---
 kind: pipeline
@@ -58,8 +58,8 @@ steps:
     password:
       from_secret: docker_password
     repo: nebulaorchestrator/drone-nebula
-    tags:
-      - linux-arm64
+    auto_tag: true
+    auto_tag_suffix: -linux-arm64
 
 ---
 kind: pipeline
@@ -90,8 +90,32 @@ steps:
     password:
       from_secret: docker_password
     repo: nebulaorchestrator/drone-nebula
-    tags:
-      - linux-arm
+    auto_tag: true
+    auto_tag_suffix: -linux-arm
+
+---
+kind: pipeline
+type: docker
+name: publish_docker_manifest
+
+steps:
+- name: manifest
+  image: plugins/manifest
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    target:  nebulaorchestrator/drone-nebula:${DRONE_SEMVER}
+    template: nebulaorchestrator/drone-nebula:${DRONE_SEMVER}-OS-ARCH
+    platforms:
+      - linux/amd64
+      - linux/arm64
+
+trigger:
+  event:
+    include:
+    - tag
 
 ---
 kind: pipeline
@@ -107,11 +131,15 @@ steps:
     password:
       from_secret: docker_password
     target:  nebulaorchestrator/drone-nebula
-    template: nebulaorchestrator/drone-nebula:OS-ARCH
+    template: nebulaorchestrator/drone-nebula:latest-OS-ARCH
     platforms:
       - linux/amd64
       - linux/arm64
-      - linux/arm
+
+trigger:
+  event:
+    include:
+    - push
 
 depends_on:
 - amd64_build
