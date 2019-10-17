@@ -32,6 +32,7 @@ steps:
     repo: nebulaorchestrator/drone-nebula
     tags:
       - linux-amd64
+      - linux-amd64-v${DRONE_BUILD_NUMBER}
 
 ---
 kind: pipeline
@@ -68,6 +69,7 @@ steps:
     repo: nebulaorchestrator/drone-nebula
     tags:
       - linux-arm64
+      - linux-arm64-v${DRONE_BUILD_NUMBER}
 
 ---
 kind: pipeline
@@ -104,6 +106,7 @@ steps:
     repo: nebulaorchestrator/drone-nebula
     tags:
       - linux-arm
+      - linux-arm-v${DRONE_BUILD_NUMBER}
 
 ---
 kind: pipeline
@@ -135,6 +138,35 @@ depends_on:
 - arm64_build
 - arm_build
 
+---
+kind: pipeline
+type: docker
+name: publish_docker_manifest_version
+
+trigger:
+  event:
+  - push
+  - tag
+
+steps:
+- name: manifest
+  image: plugins/manifest
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    target:  nebulaorchestrator/drone-nebula:v${DRONE_BUILD_NUMBER}
+    template: nebulaorchestrator/drone-nebula:OS-ARCH-v${DRONE_BUILD_NUMBER}
+    platforms:
+      - linux/amd64
+      - linux/arm64
+      - linux/arm
+
+depends_on:
+- amd64_build
+- arm64_build
+- arm_build
 
 ---
 kind: pipeline
