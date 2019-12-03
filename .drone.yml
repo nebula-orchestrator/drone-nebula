@@ -194,7 +194,7 @@ steps:
 - name: publish_changelog
   image: alpine:3.10
   commands:
-    - apk add --no-cache git
+    - apk add --no-cache git openssh
     - git add CHANGELOG.md
     - git commit -m '[skip ci] Commit automatic created changelog'
     - mkdir -p ~/.ssh
