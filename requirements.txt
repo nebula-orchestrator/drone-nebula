@@ -6,7 +6,7 @@ coverage==6.3.3
 dpath==2.0.6
 idna==3.3
 NebulaPythonSDK==2.8.0
-parse-it==2022.5.10.11.27
+parse-it==2022.5.17.8.21
 ply==3.11
 pyhcl==0.4.4
 python-dotenv==0.20.0
